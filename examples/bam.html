@@ -1,0 +1,32 @@
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style>
+#messages {
+  white-space: pre;
+  font-family: monospace;
+}
+</style>
+</head>
+<body>
+<p>Here are some reads from a BAM file:</p>
+<div id='messages'>Loading&hellip;</div>
+</body>
+<script src="/dist/bespoke.js"></script>
+
+<script>
+var bam = bespoke.BamDataSource.create({
+  url: '/test-data/index_test.bam',
+  indexUrl: '/test-data/index_test.bam.bai'
+});
+
+bam.on('newdata', function() {
+  var iv = new bespoke.ContigInterval('chrM', 10000, 20000);
+  var alignments = bam.getAlignmentsInRange(iv);
+  var strs = alignments.map(function(read) {
+    return read.toString() + ': ' + read.getSequence();
+  });
+  document.getElementById('messages').innerHTML = strs.join('<br>');
+});
+
+bam.rangeChanged({contig: 'chrM', start: 10000, stop: 20000});
+</script>
